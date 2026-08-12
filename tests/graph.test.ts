@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { buildGraph, summarizeGraph } from '../src/graph';
-import type { RepositoryIndex } from '../shared/types';
+import type { RepositoryIndex } from '../src/types';
 
 const GENERATED_AT = '2026-01-01T00:00:00.000Z';
 

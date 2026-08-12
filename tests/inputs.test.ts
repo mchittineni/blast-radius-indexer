@@ -8,7 +8,7 @@ vi.mock('@actions/core', async (importOriginal) => ({
   warning: vi.fn(),
 }));
 
-import { booleanInput, optionalInput, positiveIntInput, stringInput } from '../shared/inputs';
+import { booleanInput, optionalInput, positiveIntInput, stringInput } from '../src/inputs';
 
 /** `@actions/core` reads `INPUT_<NAME>`; set it the way the runner would. */
 function setInput(name: string, value: string): void {

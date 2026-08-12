@@ -1,11 +1,11 @@
-import type { ArtifactConsumer, ArtifactDeclaration } from '../shared/types';
+import type { ArtifactConsumer, ArtifactDeclaration } from './types';
 import {
   dockerImageAliases,
   normalizePath,
   parseDockerImageRef,
   parseTerraformSource,
   terraformModuleAliases,
-} from '../shared/normalize';
+} from './normalize';
 
 /** What a single file contributed to the index. */
 export interface ParseResult {

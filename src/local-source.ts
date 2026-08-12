@@ -1,6 +1,6 @@
 import * as fs from 'node:fs/promises';
 import * as path from 'node:path';
-import { isIgnoredPath } from '../shared/normalize';
+import { isIgnoredPath } from './normalize';
 import type { RepoDescriptor, RepoSource } from './source';
 
 /** Cap on directory entries walked per repo, so a symlink cycle cannot hang the run. */

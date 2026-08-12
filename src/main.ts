@@ -1,7 +1,7 @@
 import { pathToFileURL } from 'node:url';
 import * as core from '@actions/core';
 import * as github from '@actions/github';
-import { booleanInput, optionalInput, positiveIntInput, stringInput } from '../shared/inputs';
+import { booleanInput, optionalInput, positiveIntInput, stringInput } from './inputs';
 import { runIndexer } from './index';
 
 /**

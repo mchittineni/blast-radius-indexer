@@ -4,7 +4,7 @@ import {
   type ArtifactNode,
   type GraphIndex,
   type RepositoryIndex,
-} from '../shared/types';
+} from './types';
 
 export interface BuildGraphOptions {
   org: string;

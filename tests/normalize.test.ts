@@ -6,7 +6,7 @@ import {
   parseDockerImageRef,
   parseTerraformSource,
   terraformModuleAliases,
-} from '../shared/normalize';
+} from '../src/normalize';
 
 describe('normalizePath', () => {
   it.each([

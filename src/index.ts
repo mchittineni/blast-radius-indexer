@@ -1,7 +1,7 @@
 import * as fs from 'node:fs/promises';
 import * as path from 'node:path';
 import type { GitHub } from '@actions/github/lib/utils';
-import type { GraphIndex } from '../shared/types';
+import type { GraphIndex } from './types';
 import { buildGraph, summarizeGraph, type GraphStats } from './graph';
 import { GitHubRepoSource } from './github-source';
 import { LocalDirectoryRepoSource } from './local-source';

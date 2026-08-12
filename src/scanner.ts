@@ -1,5 +1,5 @@
-import { isIgnoredPath, normalizePath } from '../shared/normalize';
-import type { RepositoryIndex } from '../shared/types';
+import { isIgnoredPath, normalizePath } from './normalize';
+import type { RepositoryIndex } from './types';
 import { isIndexableFile, parseFile } from './parsers';
 import { mapWithConcurrency, type RepoDescriptor, type RepoSource } from './source';
 

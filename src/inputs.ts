@@ -1,5 +1,5 @@
 /**
- * Tolerant input parsing shared by both action entrypoints.
+ * Tolerant input parsing for the action entrypoint.
  *
  * `@actions/core` throws on an empty or non-YAML boolean and returns `NaN`
  * silently for a bad number. Defaults declared in `action.yml` normally prevent
