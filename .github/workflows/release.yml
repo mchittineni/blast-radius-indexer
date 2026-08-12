@@ -1,9 +1,5 @@
 name: Release
 
-# Moves the floating major tag (v1) to a newly published release, so consumers
-# pinned to `@v1` receive the update. Marketplace publishing itself is a manual
-# step on the release page — see docs/MARKETPLACE.md.
-
 on:
   release:
     types: [published]
@@ -20,21 +16,24 @@ jobs:
   verify:
     name: Verify the released commit
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout Repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ inputs.tag || github.event.release.tag_name }}
 
-      - uses: actions/setup-node@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version-file: .nvmrc
           cache: npm
 
-      - run: npm ci
-      - run: npm run all
+      - name: Install Dependencies
+        run: npm ci
+      - name: Run Tests
+        run: npm run all
 
-      # A release whose committed bundle does not match its sources would ship
-      # code nobody reviewed. Refuse to move the major tag onto it.
       - name: Confirm dist/ matches the released sources
         run: |
           set -euo pipefail
@@ -49,15 +48,16 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout Repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ inputs.tag || github.event.release.tag_name }}
           fetch-depth: 0
 
       - name: Point the major tag at this release
         env:
-          # Passed through the environment, never interpolated into the script.
           RELEASE_TAG: ${{ inputs.tag || github.event.release.tag_name }}
         run: |
           set -euo pipefail

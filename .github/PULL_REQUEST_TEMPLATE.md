@@ -18,7 +18,7 @@
 ## Contract changes
 
 - [ ] This changes `action.yml` inputs or outputs
-- [ ] This changes `shared/types.ts` or the `graph.json` shape
+- [ ] This changes `src/types.ts` or the `graph.json` shape
   - [ ] The same change was applied to the sibling repository
   - [ ] `GRAPH_SCHEMA_VERSION` was bumped if the change is breaking
 - [ ] `README.md` was updated to match

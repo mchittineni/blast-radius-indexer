@@ -1,9 +1,5 @@
 name: Check dist
 
-# GitHub Actions runs the committed `dist/index.js`, not the TypeScript sources.
-# A pull request that edits src/ without rebuilding would ship stale behavior that
-# every other check passes. This job rebuilds from scratch and diffs the result.
-
 on:
   push:
     branches: [main]
@@ -17,15 +13,19 @@ permissions:
 jobs:
   check-dist:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Setup Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version-file: .nvmrc
           cache: npm
 
-      - run: npm ci
+      - name: Install Dependencies
+        run: npm ci
 
       - name: Rebuild the bundle
         run: npm run build
@@ -41,10 +41,9 @@ jobs:
           fi
           echo "dist/ matches the sources."
 
-      # Makes a mismatch inspectable instead of leaving the contributor guessing.
       - name: Upload the expected dist/ on failure
         if: failure() && steps.diff.outcome == 'failure'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: expected-dist
           path: dist/
