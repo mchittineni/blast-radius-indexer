@@ -1,0 +1,77 @@
+name: Release
+
+# Moves the floating major tag (v1) to a newly published release, so consumers
+# pinned to `@v1` receive the update. Marketplace publishing itself is a manual
+# step on the release page — see docs/MARKETPLACE.md.
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release tag to point the major tag at (e.g. v1.2.3)'
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: Verify the released commit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.tag || github.event.release.tag_name }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci
+      - run: npm run all
+
+      # A release whose committed bundle does not match its sources would ship
+      # code nobody reviewed. Refuse to move the major tag onto it.
+      - name: Confirm dist/ matches the released sources
+        run: |
+          set -euo pipefail
+          if [ -n "$(git status --porcelain -- dist/)" ]; then
+            echo "::error::dist/ does not match the sources at this tag. Do not release."
+            exit 1
+          fi
+
+  major-tag:
+    name: Move the major tag
+    needs: verify
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.tag || github.event.release.tag_name }}
+          fetch-depth: 0
+
+      - name: Point the major tag at this release
+        env:
+          # Passed through the environment, never interpolated into the script.
+          RELEASE_TAG: ${{ inputs.tag || github.event.release.tag_name }}
+        run: |
+          set -euo pipefail
+
+          # Accept only a strict semver tag; anything else is a mistake, not a release.
+          if ! printf '%s' "$RELEASE_TAG" | grep -Eq '^v[0-9]+\.[0-9]+\.[0-9]+$'; then
+            echo "::error::Refusing to act on '$RELEASE_TAG' — expected the form v1.2.3."
+            exit 1
+          fi
+
+          MAJOR_TAG="${RELEASE_TAG%%.*}"
+          echo "Pointing $MAJOR_TAG at $RELEASE_TAG"
+
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git tag -f -a "$MAJOR_TAG" -m "Track the latest $MAJOR_TAG release ($RELEASE_TAG)"
+          git push --force origin "$MAJOR_TAG"

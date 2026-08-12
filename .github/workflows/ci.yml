@@ -1,0 +1,101 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+# A newer push to the same branch makes the in-flight run irrelevant.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: Verify on Node ${{ matrix.node }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # 22 is the supported floor; 24 is the runtime `runs.using: node24` provides.
+        node: ['22', '24']
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+
+      - run: npm ci
+
+      - name: Check formatting
+        run: npm run format:check
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Test with coverage
+        run: npm run test:coverage
+
+      - name: Build bundle
+        run: npm run build
+
+  smoke:
+    name: Run the built action
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci
+      - run: npm run build
+
+      # Unit tests cannot catch a bundling failure (a dependency doing a dynamic
+      # `require`, a bad ESM banner). Only executing dist/index.js can.
+      - name: Create a fixture organization
+        run: |
+          mkdir -p fixture/core-ui-lib fixture/portal
+          echo '{"name":"@acme/core-ui","version":"2.1.0"}' > fixture/core-ui-lib/package.json
+          echo '{"name":"@acme/portal","private":true,"dependencies":{"@acme/core-ui":"^2.0.0"}}' > fixture/portal/package.json
+
+      - name: Index the fixture with this action
+        id: index
+        uses: ./
+        with:
+          org-name: acme
+          local-path: fixture
+          output-path: fixture-graph.json
+
+      - name: Assert the graph links publisher to consumer
+        # Step outputs are passed through the environment rather than interpolated
+        # into the script, so no value can alter the shell command.
+        env:
+          REPO_COUNT: ${{ steps.index.outputs.repo-count }}
+          SHARED_COUNT: ${{ steps.index.outputs.shared-artifact-count }}
+        run: |
+          set -euo pipefail
+          echo "repos=$REPO_COUNT shared-artifacts=$SHARED_COUNT"
+          test "$REPO_COUNT" = "2"
+          test "$SHARED_COUNT" = "1"
+          node -e '
+            const graph = require("./fixture-graph.json");
+            const node = graph.artifacts["npm:@acme/core-ui"];
+            if (!node) throw new Error("publisher missing from graph");
+            if (node.publisherRepo !== "acme/core-ui-lib") throw new Error("wrong publisher");
+            if (node.consumers.length !== 1) throw new Error("consumer edge missing");
+            if (node.consumers[0].repo !== "acme/portal") throw new Error("wrong consumer");
+            console.log("smoke test passed");
+          '

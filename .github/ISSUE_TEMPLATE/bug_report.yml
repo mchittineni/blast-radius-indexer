@@ -1,0 +1,92 @@
+name: 🐛 Bug report
+description: Something behaves differently from what the README describes.
+labels: ['bug', 'needs triage']
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the report. The most useful thing you can include is the
+        workflow step log — most issues here are visible in it immediately.
+
+        **Do not paste tokens, private repository names, or a full `graph.json`
+        if any of that is sensitive.** A redacted excerpt is fine.
+
+  - type: input
+    id: version
+    attributes:
+      label: Action version
+      description: The tag or commit SHA in your `uses:` line.
+      placeholder: v1.0.0
+    validations:
+      required: true
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: What did the action do?
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected instead
+    validations:
+      required: true
+
+  - type: textarea
+    id: workflow
+    attributes:
+      label: Your workflow step
+      description: The step that invokes this action, with secrets redacted.
+      render: yaml
+      placeholder: |
+        - uses: mchittineni/blast-radius-indexer@v1
+          with:
+            org-name: my-org
+            github-token: ${{ secrets.ORG_READ_TOKEN }}
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Step log
+      description: The relevant output, including any warnings the action printed.
+      render: shell
+    validations:
+      required: false
+
+  - type: dropdown
+    id: runner
+    attributes:
+      label: Runner
+      options:
+        - GitHub-hosted (ubuntu-latest)
+        - GitHub-hosted (other)
+        - Self-hosted
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction
+      description: >-
+        If the problem involves parsing, the manifest content that triggers it is
+        the single most helpful thing you can provide. `local-path` lets you
+        reproduce most issues without any API access.
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched existing issues for this problem
+          required: true
+        - label: I redacted tokens and anything else sensitive
+          required: true

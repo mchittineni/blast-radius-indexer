@@ -1,0 +1,51 @@
+name: Check dist
+
+# GitHub Actions runs the committed `dist/index.js`, not the TypeScript sources.
+# A pull request that edits src/ without rebuilding would ship stale behavior that
+# every other check passes. This job rebuilds from scratch and diffs the result.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check-dist:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci
+
+      - name: Rebuild the bundle
+        run: npm run build
+
+      - name: Compare the rebuild against the committed dist/
+        id: diff
+        run: |
+          set -euo pipefail
+          if [ -n "$(git status --porcelain -- dist/)" ]; then
+            echo "::error::dist/ is out of date. Run 'npm run build' and commit the result."
+            git diff --stat -- dist/
+            exit 1
+          fi
+          echo "dist/ matches the sources."
+
+      # Makes a mismatch inspectable instead of leaving the contributor guessing.
+      - name: Upload the expected dist/ on failure
+        if: failure() && steps.diff.outcome == 'failure'
+        uses: actions/upload-artifact@v4
+        with:
+          name: expected-dist
+          path: dist/
+          retention-days: 5
