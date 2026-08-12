@@ -5,14 +5,6 @@
   "description": "GitHub Action that scans an organization's repositories and builds a cross-repo dependency graph (graph.json).",
   "author": "Manideep Chittineni",
   "license": "MIT",
-  "homepage": "https://github.com/mchittineni/blast-radius-indexer#readme",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/mchittineni/blast-radius-indexer.git"
-  },
-  "bugs": {
-    "url": "https://github.com/mchittineni/blast-radius-indexer/issues"
-  },
   "type": "module",
   "engines": {
     "node": ">=22.0.0",

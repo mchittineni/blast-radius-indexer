@@ -7,7 +7,7 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'lcov'],
-      include: ['src/**', 'shared/**'],
+      include: ['src/**'],
       // main.ts is a thin @actions/core adapter, verified by the bundle smoke test in CI.
       exclude: ['src/main.ts'],
       thresholds: {

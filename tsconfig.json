@@ -31,6 +31,6 @@
     "sourceMap": true,
     "noEmit": true
   },
-  "include": ["shared/**/*.ts", "src/**/*.ts", "tests/**/*.ts"],
+  "include": ["src/**/*.ts", "tests/**/*.ts"],
   "exclude": ["node_modules", "**/dist/**"]
 }
