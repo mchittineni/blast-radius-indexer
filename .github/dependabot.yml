@@ -4,7 +4,7 @@ updates:
   - package-ecosystem: npm
     directory: '/'
     schedule:
-      interval: weekly
+      interval: quarterly
       day: monday
     open-pull-requests-limit: 5
     commit-message:
@@ -18,12 +18,23 @@ updates:
       dev-tooling:
         dependency-type: development
         patterns: ['*']
+    ignore:
+      # `@types/node` must describe the *oldest* runtime we support, not the
+      # newest one released. `engines.node` is >=22, so types from a later major
+      # would let code compile here and fail on a Node 22 runner.
+      - dependency-name: '@types/node'
+        update-types: ['version-update:semver-major']
+      # typescript-eslint pins a peer range on TypeScript (8.x allows <6.1.0), so
+      # a TypeScript major lands only once typescript-eslint has caught up.
+      # Bumping it alone breaks `npm ci` outright. Revisit both together.
+      - dependency-name: 'typescript'
+        update-types: ['version-update:semver-major']
     labels: ['dependencies']
 
   - package-ecosystem: github-actions
     directory: '/'
     schedule:
-      interval: weekly
+      interval: yearly
       day: monday
     commit-message:
       prefix: 'chore'
