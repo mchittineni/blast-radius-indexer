@@ -1,0 +1,60 @@
+name: ✨ Feature request
+description: Suggest a capability or a new artifact type to support.
+labels: ['enhancement', 'needs triage']
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Describing the problem you hit is more useful than describing a solution —
+        it often turns out there is a simpler way in.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: The problem
+      description: What are you unable to do today? What did you try?
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What you would like to happen
+    validations:
+      required: true
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Area
+      options:
+        - New artifact type (protobuf, OpenAPI, Helm, Go module, ...)
+        - Parsing accuracy for an existing type
+        - New input or output
+        - Performance or API rate limits
+        - Documentation
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: artifact-details
+    attributes:
+      label: For a new artifact type — how is it declared and referenced?
+      description: >-
+        Matching only works when a publisher's declaration and a consumer's
+        reference reduce to the same canonical name. Concrete examples of both
+        sides, including the awkward spellings, are what make this implementable.
+      placeholder: |
+        Publisher declares:   go.mod → module github.com/acme/lib
+        Consumer references:  go.mod → require github.com/acme/lib v1.4.0
+    validations:
+      required: false
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives you considered
+    validations:
+      required: false
