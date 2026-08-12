@@ -24221,7 +24221,7 @@ function getOctokit(token, options, ...additionalPlugins) {
   return new GitHubWithPlugins(getOctokitOptions(token, options));
 }
 
-// shared/inputs.ts
+// src/inputs.ts
 var TRUTHY = /* @__PURE__ */ new Set(["true", "yes", "1", "on"]);
 var FALSY = /* @__PURE__ */ new Set(["false", "no", "0", "off"]);
 function optionalInput(name) {
@@ -24256,7 +24256,7 @@ function positiveIntInput(name, fallback) {
 import * as fs4 from "node:fs/promises";
 import * as path2 from "node:path";
 
-// shared/types.ts
+// src/types.ts
 var GRAPH_SCHEMA_VERSION = 1;
 function artifactKey(type, name) {
   return `${type}:${name}`;
@@ -24468,7 +24468,7 @@ function splitFullName(fullName, fallbackOwner) {
 import * as fs3 from "node:fs/promises";
 import * as path from "node:path";
 
-// shared/normalize.ts
+// src/normalize.ts
 function normalizePath(filePath) {
   return filePath.replace(/\\/g, "/").replace(/^\.\//, "").replace(/^\/+/, "");
 }
