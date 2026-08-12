@@ -56,10 +56,13 @@ permissions:
 jobs:
   index:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
 
-      - id: index
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v7
+
+      - name: Setup Blast Radius Indexer
+        id: index
         uses: mchittineni/blast-radius-indexer@v1
         with:
           org-name: ${{ github.repository_owner }}
@@ -224,7 +227,6 @@ source change.
 
 - [Code of Conduct](CODE_OF_CONDUCT.md)
 - [Security policy](SECURITY.md)
-- [Marketplace publishing](docs/MARKETPLACE.md)
 
 ## License
 

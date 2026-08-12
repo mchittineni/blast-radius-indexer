@@ -49,7 +49,7 @@ can never ship.
 action.yml        Action metadata. Must stay at the repository root (Marketplace).
 src/main.ts       Entrypoint. A thin @actions/core adapter: inputs in, outputs out.
 src/*.ts          The real logic, with no dependency on the Actions runtime.
-shared/           Types and helpers that are also duplicated in the sibling repo.
+src/types.ts      The graph.json contract, mirrored in the sibling repo.
 tests/            Vitest suites, mirroring the src module names.
 scripts/build.mjs esbuild bundler configuration.
 dist/             Generated, committed. Never edit by hand.
@@ -64,14 +64,13 @@ Two conventions hold this together:
    `RepoSource`, so the same logic runs against a fixture directory on disk. Add
    new I/O the same way rather than calling Octokit from the middle of a function.
 
-### `shared/` is duplicated across two repositories
+### `src/types.ts` is mirrored in the sibling repository
 
 This action and `blast-radius-check` are separate repositories because
-Marketplace publishes one action per repository. The files in `shared/` — most
-importantly `types.ts` and its `GRAPH_SCHEMA_VERSION` — describe the `graph.json`
-contract between them.
+Marketplace publishes one action per repository. `src/types.ts` and its
+`GRAPH_SCHEMA_VERSION` describe the `graph.json` contract between them.
 
-**If you change `shared/types.ts`, apply the same change to the sibling repository
+**If you change `src/types.ts`, apply the same change to the sibling repository
 and bump `GRAPH_SCHEMA_VERSION` for anything breaking.** The checker refuses a
 graph whose schema version is newer than it understands, which turns a silent
 misread into a clear error.
@@ -89,8 +88,8 @@ misread into a clear error.
 
 ## Adding support for a new artifact type
 
-1. Add the type to `ArtifactType` in `shared/types.ts` (and the sibling repo).
-2. Add canonicalization to `shared/normalize.ts`. Publisher names and consumer
+1. Add the type to `ArtifactType` in `src/types.ts` (and the sibling repo).
+2. Add canonicalization to `src/normalize.ts`. Publisher names and consumer
    references must reduce to the same string, or nothing will ever match — this
    is the single most common source of bugs here.
 3. Add a parser in `src/parsers.ts` returning `{ exports, imports }`, and
@@ -112,8 +111,6 @@ Maintainers only:
 
 1. Update `CHANGELOG.md`.
 2. Tag the release: `git tag -a v1.2.3 -m "v1.2.3" && git push origin v1.2.3`.
-3. Publish a GitHub Release from the tag. The `release` workflow moves the
-   floating `v1` major tag so `@v1` consumers pick the change up.
-
-See [docs/MARKETPLACE.md](docs/MARKETPLACE.md) for the Marketplace listing
-requirements and checklist.
+3. Publish a GitHub Release from the tag, checking **"Publish this Action to the
+   GitHub Marketplace"**. The `release` workflow then moves the floating `v1`
+   major tag so `@v1` consumers pick the change up.
