@@ -1,0 +1,36 @@
+{
+  "compilerOptions": {
+    /* Node 22 is the minimum supported runtime; ES2023 is fully available there. */
+    "target": "ES2023",
+    "lib": ["ES2023"],
+    /* @actions/core v3 and @actions/github v9 are ESM-only, so the sources are ESM.
+       `bundler` resolution is the honest description of the pipeline: ncc resolves
+       the graph, so extensionless relative imports are correct here. */
+    "module": "preserve",
+    "moduleResolution": "bundler",
+    "types": ["node"],
+
+    /* Strictness — every flag on, no escape hatches. */
+    "strict": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "exactOptionalPropertyTypes": true,
+    "useUnknownInCatchVariables": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "isolatedModules": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "declaration": false,
+    "sourceMap": true,
+    "noEmit": true
+  },
+  "include": ["shared/**/*.ts", "src/**/*.ts", "tests/**/*.ts"],
+  "exclude": ["node_modules", "**/dist/**"]
+}
