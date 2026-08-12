@@ -1,0 +1,19 @@
+node_modules/
+coverage/
+*.log
+npm-debug.log*
+.DS_Store
+.env
+.env.*
+!.env.example
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# Local scratch from manual runs
+output/
+mock-org/
+graph.json
+
+# NOTE: dist/ is intentionally COMMITTED. GitHub Actions executes the bundled JS
+# directly and never runs `npm install`.
