@@ -1,0 +1,72 @@
+# Marketplace requires this file at the repository root, one action per repository.
+name: 'Cross-Repo Blast Radius Indexer'
+description: "Scan an organization's repositories and build a cross-repo dependency graph for npm, Docker, and Terraform artifacts."
+author: 'Manideep Chittineni'
+
+branding:
+  icon: 'git-merge'
+  color: 'purple'
+
+inputs:
+  github-token:
+    description: >-
+      Token with read access to the organization's repositories (`contents: read`
+      on every repository to be indexed). Required unless `local-path` is set.
+    required: false
+    default: ''
+  org-name:
+    description: 'GitHub organization or user whose repositories will be scanned.'
+    required: true
+  output-path:
+    description: 'Path where graph.json will be written.'
+    required: false
+    default: 'graph.json'
+  local-path:
+    description: >-
+      Scan a local directory whose immediate sub-directories are repositories,
+      instead of calling the GitHub API. Intended for dry runs and tests.
+    required: false
+    default: ''
+  include-archived:
+    description: 'Include archived repositories in the index.'
+    required: false
+    default: 'false'
+  include-forks:
+    description: 'Include forked repositories in the index.'
+    required: false
+    default: 'false'
+  repo-filter:
+    description: >-
+      Restrict scanning to repositories whose `owner/name` matches this
+      case-insensitive substring, or a `/regex/` when wrapped in slashes.
+    required: false
+    default: ''
+  max-files-per-repo:
+    description: 'Maximum indexable files read per repository (shallowest paths win).'
+    required: false
+    default: '200'
+  concurrency:
+    description: 'Number of repositories scanned in parallel.'
+    required: false
+    default: '8'
+
+outputs:
+  graph-path:
+    description: 'Path the graph was written to.'
+  repo-count:
+    description: 'Number of repositories indexed.'
+  artifact-count:
+    description: 'Number of distinct artifacts discovered.'
+  shared-artifact-count:
+    description: 'Number of artifacts with at least one downstream consumer.'
+  consumer-edge-count:
+    description: 'Total publisher-to-consumer edges in the graph.'
+  warning-count:
+    description: 'Number of non-fatal warnings raised during the scan.'
+
+runs:
+  # GitHub Actions ships only `node20` and `node24` JavaScript runtimes; `node24`
+  # is the lowest available option satisfying this project's Node >=22 floor.
+  # Requires Actions Runner v2.327.1 or newer.
+  using: 'node24'
+  main: 'dist/index.js'
